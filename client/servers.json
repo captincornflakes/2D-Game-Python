@@ -2,5 +2,9 @@
     "Local Test": {
         "address": "localhost",
         "port": 23546
+    },
+    "test": {
+        "address": "localhost\t",
+        "port": 23546
     }
 }

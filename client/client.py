@@ -4,7 +4,7 @@ import socket
 import threading
 import time
 from pygame.locals import *
-from utils.gui_main import title_screen
+from utils.gui_main import main_menu_screen  # Updated import
 from utils.config_man import load_config, save_config
 from utils.player_auth import PlayerAuth
 from utils.server_manager import ServerManager
@@ -68,7 +68,7 @@ class ClientApp:
                 pygame.display.flip()
         except socket.error as e:
             print(f"Socket error: {e}")
-            print("Returning to title screen.")
+            print("Returning to main menu.")
         finally:
             self.udp_handler.close()
             self.tcp_handler.disconnect()
@@ -78,11 +78,11 @@ class ClientApp:
         """Run the client."""
         while self.running:
             try:
-                self.username = title_screen(self.screen, self.username, self)
+                self.username = main_menu_screen(self.screen, self.username, self)  # Updated reference
                 if self.connect_to_server():
                     self.game_loop()
                 else:
-                    print("Returning to title screen.")
+                    print("Returning to main menu.")
             except pygame.error as e:
                 print(f"Pygame error: {e}")
                 if "video system not initialized" in str(e):
