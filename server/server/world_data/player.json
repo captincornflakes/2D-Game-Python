@@ -1,0 +1,13 @@
+{
+    "d1745879-f5da-4f39-b268-23f1426ac279": {
+        "uuid": "d1745879-f5da-4f39-b268-23f1426ac279",
+        "username": "Player",
+        "inventory": [],
+        "stats": {
+            "health": 100,
+            "stamina": 100,
+            "hunger": 100
+        },
+        "online": true
+    }
+}

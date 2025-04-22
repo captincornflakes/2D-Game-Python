@@ -3,6 +3,7 @@ import json
 from utils.ops_handler import save_ops_data
 from utils.helpers import save_player_data
 from utils.worldgen import generate_initial_world  # Import the function from worldgen.py
+from utils.config_handler import load_config  # Import the config handler
 
 def initialize_world_folder(world_folder, initial_chunks, world_generator, players, ops, config):
     """Initialize the world folder and generate initial world data if it doesn't exist."""

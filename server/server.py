@@ -9,8 +9,7 @@ from utils.world_handler import initialize_world_folder, load_world
 from utils.config_handler import load_config  # Import the load_config function
 
 # Load configuration using the config handler
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), 'config.json')
-CONFIG = load_config(CONFIG_PATH)
+CONFIG = load_config()  # No need to pass CONFIG_PATH
 
 # Constants
 HOST = CONFIG["server"]["host"]
@@ -35,7 +34,10 @@ class GameServer:
         self.world_folder = WORLD_FOLDER
         self.players = PlayerAuth(self.world_folder)
         self.command_handler = CommandHandler(self.world_folder, self.players)
-        self.connection_handler = ConnectionHandler(HOST, TCP_PORT, UDP_PORT)  # Pass only the required arguments
+        self.connection_handler = ConnectionHandler(HOST, TCP_PORT, UDP_PORT)
+
+        # Create a WorldGenerator instance
+        self.world_generator = WorldGenerator(chunk_size=self.chunk_size)
 
         # Initialize or load the world folder
         if os.path.exists(self.world_folder):
@@ -46,7 +48,7 @@ class GameServer:
             initialize_world_folder(
                 self.world_folder,
                 self.initial_chunks,
-                None,  # Removed world_generator
+                self.world_generator,  # Pass the WorldGenerator instance
                 self.players,
                 OPS,
                 CONFIG
