@@ -6,7 +6,9 @@ import os
 import threading
 from utils.gui_game import draw_checkered_grid
 from utils.config_man import load_config  # Import the config loader
-from utils.event.connect_to_server import connect_to_server  # Import the function
+from utils.event.connect_to_server import connect_to_server  # Import the connect event
+from utils.event.keepalive import start_keepalive  # Import the keepalive event
+from utils.event.ping_server import ping_server  # Import the ping event
 from utils.tcp_handler import TCPHandler
 from utils.udp_handler import UDPHandler
 
@@ -22,23 +24,18 @@ class Client:
         self.connected = False  # Track connection state
 
     def connect_to_server(self, uuid):
-        """Connect to the server using UDP and send a join request."""
+        """Connect to the server using the connect_to_server event."""
         try:
-            join_request = {
-                "action": "connect",
-                "uuid": uuid,
-                "username": self.player_name
-            }
-            self.udp_handler.send_message(join_request)
-            print(f"Sent join request to server: {self.server_address}:{self.udp_port} (UDP)")
-
-            response = self.udp_handler.receive_message()
-            if response and response.get("action") == "connected":
-                print(f"Connected to server: {response}")
+            success = connect_to_server(self.udp_handler, uuid, self.player_name)
+            if success:
+                print(f"Connected to server: {self.server_address}:{self.udp_port} (UDP)")
                 self.connected = True  # Update connection state
+
+                # Start the keepalive mechanism
+                start_keepalive(self)
                 return True
             else:
-                print(f"Failed to connect: {response.get('message', 'Unknown error')}")
+                print("Failed to connect to the server.")
                 self.connected = False
                 return False
         except Exception as e:
@@ -47,23 +44,12 @@ class Client:
             return False
 
     def ping_server(self, timeout=2):
-        """Ping the server to check if it is reachable and retrieve the MOTD."""
+        """Ping the server using the ping_server event."""
         try:
-            self.tcp_handler.connect()
-            ping_request = {"action": "ping"}
-            self.tcp_handler.send_message(ping_request)
-
-            response = self.tcp_handler.receive_message()
-            if response and response.get("action") == "pong" and "motd" in response:
-                return response["motd"]
-            else:
-                print(f"Unexpected response: {response}")
-                return None
+            return ping_server(self.tcp_handler, timeout)
         except Exception as e:
             print(f"Failed to ping server: {e}")
             return None
-        finally:
-            self.tcp_handler.disconnect()
 
     def disconnect(self):
         """Disconnect from the server."""

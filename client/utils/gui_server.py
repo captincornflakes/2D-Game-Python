@@ -141,7 +141,7 @@ def display_join_server_screen(screen, splash_image_path, client_app):
                     # Call connect_to_server from connection_handler
                     if connect_to_server(client_app, client_app.client_uuid):
                         print("Connection successful. Loading game GUI...")
-                        game_gui_loop(screen)
+                        game_gui_loop(screen, client_app)  # Pass client_app as the client argument
                         return  # Exit the join server screen
 
                     # Re-enable the connect button if connection fails

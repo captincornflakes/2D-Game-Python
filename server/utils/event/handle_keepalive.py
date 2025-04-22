@@ -34,6 +34,16 @@ def handle_keepalive(addr, message, clients, player_file_path):
             json.dump(player_data, file, indent=4)
 
         print(f"Updated keepalive for player {player_data[client_uuid]['username']} (UUID: {client_uuid})")
+
+        # Send a response back to the client confirming the keepalive
+        keepalive_response = {
+            "action": "keepalive_ack",
+            "message": "Keepalive received. Server is running."
+        }
+        udp_socket = clients.get("udp_socket")
+        if udp_socket:
+            udp_socket.sendto(json.dumps(keepalive_response).encode('utf-8'), addr)
+            print(f"Sent keepalive acknowledgment to {addr}")
     else:
         print(f"Player with UUID {client_uuid} not found in player.json.")
 

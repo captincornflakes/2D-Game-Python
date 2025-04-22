@@ -8,7 +8,6 @@ from utils.commands import CommandHandler, handle_console_command
 from utils.ops_handler import load_ops
 from utils.world_handler import initialize_world_folder, load_world
 from utils.config_handler import load_config  # Import the load_config function
-from utils.event.handle_keepalive import monitor_keepalive
 
 # Load configuration using the config handler
 CONFIG = load_config()  # No need to pass CONFIG_PATH
@@ -62,10 +61,6 @@ class GameServer:
         """Start the server and handle connections."""
         print(f"Server started on {HOST}:{TCP_PORT} (TCP) and {UDP_PORT} (UDP)")
         print(f"MOTD: {CONFIG['world']['motd']}")
-
-        # Start the keepalive monitor in a separate thread
-        keepalive_thread = Thread(target=monitor_keepalive, args=(self.clients, self.player_file_path), daemon=True)
-        keepalive_thread.start()
 
         self.connection_handler.start()  # Start the connection handler
 
