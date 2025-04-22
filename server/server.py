@@ -1,5 +1,6 @@
 import socket
 import os
+from threading import Thread
 from world.generator import WorldGenerator
 from utils.connection_handler import ConnectionHandler
 from utils.player_auth import PlayerAuth
@@ -7,6 +8,7 @@ from utils.commands import CommandHandler, handle_console_command
 from utils.ops_handler import load_ops
 from utils.world_handler import initialize_world_folder, load_world
 from utils.config_handler import load_config  # Import the load_config function
+from utils.event.handle_keepalive import monitor_keepalive
 
 # Load configuration using the config handler
 CONFIG = load_config()  # No need to pass CONFIG_PATH
@@ -34,7 +36,9 @@ class GameServer:
         self.world_folder = WORLD_FOLDER
         self.players = PlayerAuth(self.world_folder)
         self.command_handler = CommandHandler(self.world_folder, self.players)
-        self.connection_handler = ConnectionHandler(HOST, TCP_PORT, UDP_PORT)
+        self.player_file_path = os.path.join(WORLD_FOLDER, "player.json")
+        self.connection_handler = ConnectionHandler(HOST, TCP_PORT, UDP_PORT, self.player_file_path)
+        self.clients = {}  # Dictionary to track connected clients
 
         # Create a WorldGenerator instance
         self.world_generator = WorldGenerator(chunk_size=self.chunk_size)
@@ -58,6 +62,11 @@ class GameServer:
         """Start the server and handle connections."""
         print(f"Server started on {HOST}:{TCP_PORT} (TCP) and {UDP_PORT} (UDP)")
         print(f"MOTD: {CONFIG['world']['motd']}")
+
+        # Start the keepalive monitor in a separate thread
+        keepalive_thread = Thread(target=monitor_keepalive, args=(self.clients, self.player_file_path), daemon=True)
+        keepalive_thread.start()
+
         self.connection_handler.start()  # Start the connection handler
 
         while True:

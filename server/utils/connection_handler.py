@@ -5,14 +5,16 @@ from utils.event.handle_ping import handle_ping
 from utils.event.handle_connect import handle_connect
 from utils.event.handle_move import handle_move  # Import the handle_move function
 from utils.event.handle_tile_update import handle_tile_update  # Import the handle_tile_update function
+from utils.event.handle_keepalive import handle_keepalive  # Import the handle_keepalive function
 
 
 class ConnectionHandler:
-    def __init__(self, host, tcp_port, udp_port):
+    def __init__(self, host, tcp_port, udp_port, player_file_path):
         self.host = host
         self.tcp_port = tcp_port
         self.udp_port = udp_port
         self.clients = {}  # Store client info: {addr: {"uuid": ..., "tcp_socket": ..., "udp_addr": ...}}
+        self.player_file_path = player_file_path  # Path to the player.json file
 
         # Initialize TCP and UDP handlers
         self.tcp_handler = TCPHandler(host, tcp_port, self.handle_tcp_message)
@@ -41,5 +43,7 @@ class ConnectionHandler:
             handle_move(addr, message)
         elif action == "tile_update":
             handle_tile_update(addr, message)
+        elif action == "keepalive":
+            handle_keepalive(addr, message, self.clients, self.player_file_path)  # Handle keepalive messages
         else:
             print(f"Unhandled UDP action from {addr}: {action}")

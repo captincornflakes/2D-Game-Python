@@ -13,6 +13,7 @@ from utils.event.connect_to_server import connect_to_server
 from utils.event.ping_server import ping_server
 from utils.tcp_handler import TCPHandler
 from utils.udp_handler import UDPHandler
+from utils.event.keepalive import start_keepalive  # Import the keepalive function
 
 # Constants
 TILE_SIZE = 32
@@ -44,6 +45,16 @@ class ClientApp:
 
     def save_config(self):
         save_config(self.config_path, self.config)
+
+    def connect_to_server(self):
+        """Connect to the server and start the keepalive mechanism."""
+        if connect_to_server(self, self.client_uuid):
+            print("Connected to the server. Starting keepalive...")
+            start_keepalive(self)  # Start sending keepalive messages
+            return True
+        else:
+            print("Failed to connect to the server.")
+            return False
 
     def game_loop(self):
         try:
