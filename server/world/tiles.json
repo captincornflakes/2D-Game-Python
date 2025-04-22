@@ -1,0 +1,26 @@
+{
+    "grass": {
+        "passable": true,
+        "breakable": true,
+        "durability": 10,
+        "asset_id": "grass_asset",
+        "file_name": "grass.png",
+        "damage_to_entities": 0
+    },
+    "stone": {
+        "passable": false,
+        "breakable": true,
+        "durability": 50,
+        "asset_id": "stone_asset",
+        "file_name": "stone.png",
+        "damage_to_entities": 0
+    },
+    "sand": {
+        "passable": true,
+        "breakable": true,
+        "durability": 5,
+        "asset_id": "sand_asset",
+        "file_name": "sand.png",
+        "damage_to_entities": 0
+    }
+}
