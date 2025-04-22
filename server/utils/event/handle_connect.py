@@ -1,26 +1,35 @@
 import json
 import os
 from utils.config_handler import load_config  # Import the config handler
+from utils.player_auth import PlayerAuth  # Import PlayerAuth for API validation
 
 def handle_connect(addr, message, clients):
     """Handle a connection request from a UDP client."""
     print(f"Handling connection from {addr}: {message}")
 
     # Extract client information from the message
-    client_uuid = message.get("uuid")
     username = message.get("username")
 
-    if not client_uuid or not username:
-        print(f"Invalid connection request from {addr}: Missing 'uuid' or 'username'")
+    if not username:
+        print(f"Invalid connection request from {addr}: Missing 'username'")
         return
 
     # Load the server configuration to determine the world folder
     config = load_config()  # No need to pass a path
-    world_folder = config.get("world", {}).get("world_file", "world_data")
-    player_file_path = os.path.join("server", world_folder, "player.json")
+    world_folder = os.path.join(os.path.dirname(__file__), "..", "..", config.get("world", {}).get("world_file", "world_data"))
+    player_file_path = os.path.join(world_folder, "player.json")
 
     # Ensure the directory for player.json exists
     os.makedirs(os.path.dirname(player_file_path), exist_ok=True)
+
+    # Initialize PlayerAuth to use the check_player_api method
+    player_auth = PlayerAuth(world_folder)
+
+    # Validate the player and retrieve the UUID from the API
+    client_uuid = player_auth.check_player_api(username)
+    if not client_uuid:
+        print(f"Failed to validate player {username} via API. Connection denied.")
+        return
 
     # Load existing player data from player.json
     if os.path.exists(player_file_path):
@@ -34,6 +43,7 @@ def handle_connect(addr, message, clients):
         print(f"Player {username} with UUID {client_uuid} found in player.json")
         player_info = player_data[client_uuid]
         player_info["online"] = True  # Mark the player as online
+        player_info["udp_addr"] = addr  # Log the UDP connection address
     else:
         print(f"Player {username} with UUID {client_uuid} not found. Adding to player.json")
         # Add new player data
@@ -46,7 +56,8 @@ def handle_connect(addr, message, clients):
                 "stamina": 100,
                 "hunger": 100
             },
-            "online": True
+            "online": True,
+            "udp_addr": addr  # Log the UDP connection address
         }
         player_data[client_uuid] = player_info
 
