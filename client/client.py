@@ -29,7 +29,7 @@ splash_image_path = os.path.join(assets_folder, "splash_screen.png")
 class ClientApp:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)  # Allow resizing
         pygame.display.set_caption("2D Scroll Survivor - Client")
         self.running = True
         self.config_path = os.path.join(os.path.dirname(__file__), "config.json")
@@ -63,6 +63,10 @@ class ClientApp:
                     if event.type == QUIT:
                         self.running = False
                         break
+                    elif event.type == VIDEORESIZE:
+                        # Handle screen resizing
+                        self.screen = pygame.display.set_mode((event.w, event.h), RESIZABLE)
+                        print(f"Screen resized to: {event.w}x{event.h}")
                 self.screen.fill((0, 0, 0))
                 draw_checkered_grid(self.screen)
                 pygame.display.flip()
@@ -88,7 +92,7 @@ class ClientApp:
                 if "video system not initialized" in str(e):
                     print("Reinitializing pygame...")
                     pygame.init()
-                    self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+                    self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), RESIZABLE)
                     pygame.display.set_caption("2D Scroll Survivor - Client")
             except Exception as e:
                 print(f"Unexpected error: {e}")

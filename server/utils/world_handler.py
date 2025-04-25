@@ -77,3 +77,113 @@ def load_world(world_folder, players):
 
     # Final output message
     print("World file is loaded.")
+
+def get_chunk(chunk_x, chunk_y):
+    """Retrieve a specific chunk from the world folder."""
+    # Load the world folder path from the config.json file
+    config = load_config("config.json")
+    world_folder = config["world"]["folder"]
+
+    # Construct the chunk file path
+    chunk_file = os.path.join(world_folder, "chunks", f"{chunk_x}x{chunk_y}.json")
+    if os.path.exists(chunk_file):
+        try:
+            with open(chunk_file, 'r') as f:
+                chunk_data = json.load(f)
+            print(f"Chunk ({chunk_x}, {chunk_y}) loaded successfully.")
+            return chunk_data
+        except Exception as e:
+            print(f"Error loading chunk ({chunk_x}, {chunk_y}): {e}")
+            return None
+    else:
+        print(f"Chunk ({chunk_x}, {chunk_y}) does not exist.")
+        return None
+
+def update_player_location(world_folder, uuid, new_location):
+    """Update the player's location in the players.json file."""
+    players_file = os.path.join(world_folder, "players.json")
+
+    if not os.path.exists(players_file):
+        print(f"Players file not found at {players_file}. Creating a new one.")
+        player_data = {}
+    else:
+        try:
+            with open(players_file, "r") as file:
+                player_data = json.load(file)
+        except Exception as e:
+            print(f"Error loading players.json: {e}")
+            return
+
+    if uuid in player_data:
+        print(f"Updating location for player with UUID {uuid}.")
+        player_data[uuid]["location"] = new_location
+    else:
+        print(f"Adding new player with UUID {uuid}.")
+        player_data[uuid] = {"location": new_location}
+
+    try:
+        with open(players_file, "w") as file:
+            json.dump(player_data, file, indent=4)
+        print(f"Player location for UUID {uuid} successfully updated.")
+    except Exception as e:
+        print(f"Error saving players.json: {e}")
+
+
+def update_player_inventory(world_folder, uuid, new_inventory):
+    """Update the player's inventory in the players.json file."""
+    players_file = os.path.join(world_folder, "players.json")
+
+    if not os.path.exists(players_file):
+        print(f"Players file not found at {players_file}. Creating a new one.")
+        player_data = {}
+    else:
+        try:
+            with open(players_file, "r") as file:
+                player_data = json.load(file)
+        except Exception as e:
+            print(f"Error loading players.json: {e}")
+            return
+
+    if uuid in player_data:
+        print(f"Updating inventory for player with UUID {uuid}.")
+        player_data[uuid]["inventory"] = new_inventory
+    else:
+        print(f"Adding new player with UUID {uuid}.")
+        player_data[uuid] = {"inventory": new_inventory}
+
+    try:
+        with open(players_file, "w") as file:
+            json.dump(player_data, file, indent=4)
+        print(f"Player inventory for UUID {uuid} successfully updated.")
+    except Exception as e:
+        print(f"Error saving players.json: {e}")
+
+
+def update_player_stats(world_folder, uuid, new_stats):
+    """Update the player's stats in the players.json file."""
+    players_file = os.path.join(world_folder, "players.json")
+
+    if not os.path.exists(players_file):
+        print(f"Players file not found at {players_file}. Creating a new one.")
+        player_data = {}
+    else:
+        try:
+            with open(players_file, "r") as file:
+                player_data = json.load(file)
+        except Exception as e:
+            print(f"Error loading players.json: {e}")
+            return
+
+    if uuid in player_data:
+        print(f"Updating stats for player with UUID {uuid}.")
+        player_data[uuid]["stats"] = new_stats
+    else:
+        print(f"Adding new player with UUID {uuid}.")
+        player_data[uuid] = {"stats": new_stats}
+
+    try:
+        with open(players_file, "w") as file:
+            json.dump(player_data, file, indent=4)
+        print(f"Player stats for UUID {uuid} successfully updated.")
+    except Exception as e:
+        print(f"Error saving players.json: {e}")

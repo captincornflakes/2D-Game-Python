@@ -1,6 +1,7 @@
 import pygame
 import os
 from utils.gui_utils import draw_button  # Import draw_button from gui_utils
+from utils.gui_keybindings import display_keybindings_screen  # Import the keybindings GUI
 
 def display_settings_screen(screen, username, splash_image_path):
     """Display the 'Settings' screen."""
@@ -32,21 +33,17 @@ def display_settings_screen(screen, username, splash_image_path):
         username_render = input_font.render(input_text, True, (0, 0, 0))  # Black text
         screen.blit(username_render, (input_box.x + 5, input_box.y + 5))
 
-        # Back Button
-        back_rect = pygame.Rect(screen.get_width() // 2 - 100, 400, 200, 50)
-        pygame.draw.rect(screen, (200, 200, 200), back_rect)  # Draw button background
-        pygame.draw.rect(screen, (255, 255, 255), back_rect, 2)  # Draw button border
-        back_text = font.render("Back", True, (0, 0, 0))
-        back_text_rect = back_text.get_rect(center=back_rect.center)
-        screen.blit(back_text, back_text_rect)
-
         # Save Button
         save_rect = pygame.Rect(screen.get_width() // 2 - 100, 320, 200, 50)
-        pygame.draw.rect(screen, (200, 200, 200), save_rect)  # Draw button background
-        pygame.draw.rect(screen, (255, 255, 255), save_rect, 2)  # Draw button border
-        save_text = font.render("Save", True, (0, 0, 0))
-        save_text_rect = save_text.get_rect(center=save_rect.center)
-        screen.blit(save_text, save_text_rect)
+        draw_button(screen, save_rect, "Save", font)
+
+        # Keybinds Button
+        keybinds_rect = pygame.Rect(screen.get_width() // 2 - 100, 400, 200, 50)
+        draw_button(screen, keybinds_rect, "Keybinds", font)
+
+        # Back Button
+        back_rect = pygame.Rect(screen.get_width() // 2 - 100, 480, 200, 50)
+        draw_button(screen, back_rect, "Back", font)
 
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -54,6 +51,9 @@ def display_settings_screen(screen, username, splash_image_path):
                     return input_text  # Return the updated username
                 if save_rect.collidepoint(event.pos):
                     print(f"Username '{input_text}' saved!")  # Simulate saving the username
+                if keybinds_rect.collidepoint(event.pos):
+                    # Open the keybindings GUI
+                    display_keybindings_screen(screen, splash_image_path)
                 if input_box.collidepoint(event.pos):
                     input_active = True
                 else:

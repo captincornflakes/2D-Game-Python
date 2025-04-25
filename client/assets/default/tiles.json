@@ -22,5 +22,37 @@
         "asset_id": "sand_asset",
         "file_name": "sand.png",
         "damage_to_entities": 0
+    },
+    "tree": {
+        "passable": true,
+        "breakable": true,
+        "durability": 5,
+        "asset_id": "tree_asset",
+        "file_name": "tree.png",
+        "damage_to_entities": 0
+    },
+    "dirt": {
+        "passable": true,
+        "breakable": true,
+        "durability": 5,
+        "asset_id": "dirt_asset",
+        "file_name": "dirt.png",
+        "damage_to_entities": 0
+    },
+    "water": {
+        "passable": true,
+        "breakable": true,
+        "durability": 5,
+        "asset_id": "water_asset",
+        "file_name": "water.png",
+        "damage_to_entities": 0
+    },
+    "lava": {
+        "passable": true,
+        "breakable": true,
+        "durability": 5,
+        "asset_id": "lava_asset",
+        "file_name": "lava.png",
+        "damage_to_entities": 0
     }
 }

@@ -12,6 +12,14 @@ def connect_to_server(client, uuid):
         response = client.udp_handler.receive_message()
         if response and response.get("action") == "connected":
             print(f"Connected to server: {response}")
+            
+            # Store the received player data and coordinates in the client object
+            client.player_data = response.get("player_data", {})
+            client.coordinates = response.get("coordinates", {"x": 0, "y": 0})
+            
+            print(f"Player data stored: {client.player_data}")
+            print(f"Player coordinates stored: {client.coordinates}")
+            
             client.connected = True  # Update connection state
             return True
         else:

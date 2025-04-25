@@ -5,6 +5,8 @@
     "assets_folder": "assets\\default",
     "screen_width": 1280,
     "screen_height": 720,
+    "gui_scale": 1.0, 
+    "refresh_rate_limit": 60,
     "server_uuids": {
         "localhost:23546": "d1745879-f5da-4f39-b268-23f1426ac279"
     }

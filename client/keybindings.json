@@ -1,0 +1,15 @@
+{
+    "up": "W",
+    "down": "S",
+    "left": "A",
+    "right": "D",
+    "action": "E",
+    "inventory_open": "I",
+    "slot1": "1",
+    "slot2": "2",
+    "slot3": "3",
+    "slot4": "4",
+    "commands": "/",
+    "chat": "T",
+    "run": "Shift"
+}

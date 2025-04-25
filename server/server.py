@@ -36,7 +36,16 @@ class GameServer:
         self.players = PlayerAuth(self.world_folder)
         self.command_handler = CommandHandler(self.world_folder, self.players)
         self.player_file_path = os.path.join(WORLD_FOLDER, "player.json")
-        self.connection_handler = ConnectionHandler(HOST, TCP_PORT, UDP_PORT, self.player_file_path)
+        
+        # Pass world_folder and chunk_size to the ConnectionHandler
+        self.connection_handler = ConnectionHandler(
+            HOST,
+            TCP_PORT,
+            UDP_PORT,
+            self.player_file_path,
+            self.world_folder,  # Pass the world folder
+            self.chunk_size     # Pass the chunk size
+        )
         self.clients = {}  # Dictionary to track connected clients
 
         # Create a WorldGenerator instance

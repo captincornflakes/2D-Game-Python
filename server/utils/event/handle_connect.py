@@ -17,7 +17,7 @@ def handle_connect(addr, message, clients):
     # Load the server configuration to determine the world folder
     config = load_config()  # No need to pass a path
     world_folder = os.path.join(os.path.dirname(__file__), "..", "..", config.get("world", {}).get("world_file", "world_data"))
-    player_file_path = os.path.join(world_folder, "player.json")
+    player_file_path = os.path.join(world_folder, "players.json")
 
     # Ensure the directory for player.json exists
     os.makedirs(os.path.dirname(player_file_path), exist_ok=True)
@@ -40,13 +40,13 @@ def handle_connect(addr, message, clients):
 
     # Check if the player already exists in the file
     if client_uuid in player_data:
-        print(f"Player {username} with UUID {client_uuid} found in player.json")
+        print(f"Player {username} with UUID {client_uuid} found in players.json")
         player_info = player_data[client_uuid]
         player_info["online"] = True  # Mark the player as online
         player_info["udp_addr"] = addr  # Log the UDP connection address
     else:
         print(f"Player {username} with UUID {client_uuid} not found. Adding to player.json")
-        # Add new player data
+        # Add new player data with default location
         player_info = {
             "uuid": client_uuid,
             "username": username,
@@ -56,10 +56,18 @@ def handle_connect(addr, message, clients):
                 "stamina": 100,
                 "hunger": 100
             },
+            "location": {  # Default location
+                "x": 1.5,
+                "y": 1.5
+            },
             "online": True,
             "udp_addr": addr  # Log the UDP connection address
         }
         player_data[client_uuid] = player_info
+
+    # Ensure the "location" key exists in player_info
+    if "location" not in player_info:
+        player_info["location"] = {"x": 1.5, "y": 1.5}  # Add default location if missing
 
     # Save the updated player data back to player.json
     with open(player_file_path, "w") as file:
@@ -74,11 +82,12 @@ def handle_connect(addr, message, clients):
 
     print(f"Registered client {username} with UUID {client_uuid} at {addr}")
 
-    # Send a response to the client with their player data
+    # Send a response to the client with their player data, including coordinates
     response = {
         "action": "connected",
         "message": f"Welcome, {username}!",
-        "player_data": player_info
+        "player_data": player_info,
+        "coordinates": player_info["location"]  # Include the player's coordinates
     }
     response_data = json.dumps(response).encode('utf-8')
 
