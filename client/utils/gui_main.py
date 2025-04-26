@@ -1,24 +1,15 @@
 import pygame
-import os
-from utils.gui_utils import draw_button  # Import draw_button from gui_utils
-from utils.gui_settings import display_settings_screen  # Import from gui_settings
-from utils.gui_server import display_join_server_screen  # Import the server GUI function
-from utils.gui_game import game_gui_loop  # Import the game GUI loop
+from utils.gui_utils import draw_button, draw_splash_screen  # Ensure draw_splash_screen is imported
+from utils.gui_settings import display_settings_screen  # Ensure settings GUI is imported
+from utils.gui_server import display_join_server_screen  # Ensure server GUI is imported
 
-def main_menu_screen(screen, username, client_app):
-    """Display the main menu screen with navigation to other screens."""
+def main_menu_screen(screen, client):
     font = pygame.font.Font(None, 36)
     title_font = pygame.font.Font(None, 48)
 
-    # Load assets
-    assets_folder = client_app.config.get("assets_folder", "assets")
-    splash_image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), assets_folder, "splash_screen.png")
-    splash_image = pygame.image.load(splash_image_path)
-    splash_image = pygame.transform.scale(splash_image, (screen.get_width(), screen.get_height()))
-
     while True:
-        # Draw the splash screen as the background
-        screen.blit(splash_image, (0, 0))
+        screen.fill((0, 0, 0))
+        draw_splash_screen(screen, client)
 
         # Title
         title = title_font.render("2D Scroll Survivor", True, (255, 255, 255))
@@ -35,9 +26,9 @@ def main_menu_screen(screen, username, client_app):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if join_rect.collidepoint(event.pos):
                     # Navigate to the server selector screen
-                    display_join_server_screen(screen, splash_image_path, client_app, main_menu_screen)
+                    display_join_server_screen(screen, client)
                 if settings_rect.collidepoint(event.pos):
                     # Navigate to the settings screen
-                    username = display_settings_screen(screen, username, splash_image_path)
+                    client.username = display_settings_screen(screen, client)
 
         pygame.display.flip()

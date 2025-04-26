@@ -2,16 +2,16 @@ import socket
 import json
 
 class UDPHandler:
-    def __init__(self, server_address, udp_port):
-        self.server_address = server_address
-        self.udp_port = udp_port
+    def __init__(self, address, port):
+        self.address = address
+        self.port = port
         self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_socket.settimeout(5)
 
     def send_message(self, message):
         """Send a JSON-encoded message to the server over UDP."""
         try:
-            self.udp_socket.sendto(json.dumps(message).encode('utf-8'), (self.server_address, self.udp_port))
+            self.udp_socket.sendto(json.dumps(message).encode('utf-8'), (self.address, self.port))
         except Exception as e:
             print(f"Failed to send UDP message: {e}")
 
@@ -27,4 +27,4 @@ class UDPHandler:
     def close(self):
         """Close the UDP socket."""
         self.udp_socket.close()
-        print("Closed UDP socket.")
+        #print("Closed UDP socket.")

@@ -1,23 +1,18 @@
 import pygame
-import os
-from utils.gui_utils import draw_button  # Import draw_button from gui_utils
-from utils.gui_keybindings import display_keybindings_screen  # Import the keybindings GUI
+from utils.gui_utils import draw_button, draw_splash_screen  # Add draw_splash_screen
+from utils.gui_keybindings import display_keybindings_screen  # Ensure keybindings GUI is imported
 
-def display_settings_screen(screen, username, splash_image_path):
-    """Display the 'Settings' screen."""
+def display_settings_screen(screen, client):
+    username = client.player_name  # Get the username from the client app
     font = pygame.font.Font(None, 36)
     input_font = pygame.font.Font(None, 28)
     input_box = pygame.Rect(300, 250, 200, 40)
     input_active = False
     input_text = username
 
-    # Load the splash screen image
-    splash_image = pygame.image.load(splash_image_path)
-    splash_image = pygame.transform.scale(splash_image, (screen.get_width(), screen.get_height()))
-
     while True:
-        # Draw the splash screen as the background
-        screen.blit(splash_image, (0, 0))
+        screen.fill((0, 0, 0))
+        draw_splash_screen(screen, client)
 
         # Title
         title = font.render("Settings", True, (255, 255, 255))
@@ -52,8 +47,7 @@ def display_settings_screen(screen, username, splash_image_path):
                 if save_rect.collidepoint(event.pos):
                     print(f"Username '{input_text}' saved!")  # Simulate saving the username
                 if keybinds_rect.collidepoint(event.pos):
-                    # Open the keybindings GUI
-                    display_keybindings_screen(screen, splash_image_path)
+                    display_keybindings_screen(screen, client)
                 if input_box.collidepoint(event.pos):
                     input_active = True
                 else:

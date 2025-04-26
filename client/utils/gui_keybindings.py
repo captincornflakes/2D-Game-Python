@@ -1,10 +1,16 @@
 import pygame
 from pygame.locals import *
-from utils.keybindings import Keybinds
-from utils.gui_utils import draw_button
+from utils.keybindings import Keybinds  # Ensure Keybinds is imported correctly
+from utils.gui_utils import draw_button, unload_previous_guis, draw_splash_screen  # Add draw_splash_screen
 
-def display_keybindings_screen(screen, splash_image_path):
+
+def display_keybindings_screen(screen, client):
     """Display the 'Keybindings' screen in a grid layout with two columns."""
+    # Unload the previous GUI
+    unload_previous_guis()
+
+
+
     font = pygame.font.Font(None, 36)
     input_font = pygame.font.Font(None, 28)
 
@@ -31,14 +37,13 @@ def display_keybindings_screen(screen, splash_image_path):
         y = y_start + row * row_height
         input_boxes[action] = pygame.Rect(x + 200, y, 200, 40)
 
-    # Load the splash screen image
-    splash_image = pygame.image.load(splash_image_path)
-    splash_image = pygame.transform.scale(splash_image, (screen.get_width(), screen.get_height()))
-
     while True:
-        # Draw the splash screen as the background
-        screen.blit(splash_image, (0, 0))
+        # Clear the screen at the start of each frame
+        screen.fill((0, 0, 0))  # Black background
 
+        screen.fill((0, 0, 0))
+        draw_splash_screen(screen, client)
+        
         # Title
         title = font.render("Keybindings", True, (255, 255, 255))
         screen.blit(title, (screen.get_width() // 2 - title.get_width() // 2, 50))

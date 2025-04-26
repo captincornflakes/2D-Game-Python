@@ -1,11 +1,15 @@
 import pygame
 from pygame.locals import *
-from utils.gui_utils import draw_button  # Import the shared function
+from utils.gui_utils import draw_button, draw_splash_screen  # Import draw_splash_screen
+from utils.server_manager import ServerManager  # Import the ServerManager class
 
-def display_add_server_screen(screen, splash_image_path, server_manager):
+def display_add_server_screen(screen, client):
     """Display the 'Add Server' screen."""
     font = pygame.font.Font(None, 36)
     input_font = pygame.font.Font(None, 28)
+
+    # Initialize the ServerManager
+    server_manager = ServerManager()
 
     # Input fields for adding a new server
     input_active = {"name": False, "address": False, "port": False}
@@ -18,9 +22,7 @@ def display_add_server_screen(screen, splash_image_path, server_manager):
 
     while True:
         # Draw the splash screen as the background
-        splash_image = pygame.image.load(splash_image_path)
-        splash_image = pygame.transform.scale(splash_image, (screen.get_width(), screen.get_height()))
-        screen.blit(splash_image, (0, 0))
+        draw_splash_screen(screen, client)
 
         # Title
         title = font.render("Add Server", True, (255, 255, 255))

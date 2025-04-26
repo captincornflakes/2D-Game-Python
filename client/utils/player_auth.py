@@ -2,10 +2,10 @@ class PlayerAuth:
     def __init__(self, connection_handler):
         self.connection_handler = connection_handler
 
-    def authenticate_player(self, username):
+    def authenticate_player(self):
         auth_message = {
             "action": "authenticate",
-            "username": username
+            "username": self.player_name
         }
 
         # Send the authentication message to the server

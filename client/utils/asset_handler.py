@@ -1,13 +1,12 @@
 import os
 import json
-import pygame
-from utils.config_man import load_config
+import pygame  # Ensure pygame is imported for asset loading
 
 class AssetHandler:
-    def __init__(self, config_path):
+    def __init__(self, config):
         """Initialize the AssetHandler by loading assets and tile metadata."""
-        # Load configuration
-        self.config = load_config(config_path)
+        # Use the provided configuration
+        self.config = config
         self.assets_folder = self.config.get("assets_folder", "assets/default")
         self.tiles_file = os.path.join(self.assets_folder, "tiles.json")
 

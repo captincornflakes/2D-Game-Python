@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
-from utils.gui_utils import draw_button  # Import the shared function
+from utils.gui_utils import draw_button, draw_splash_screen  # Import draw_splash_screen
 
-def display_edit_server_screen(screen, splash_image_path, server_manager, server_name, server_info):
+def display_edit_server_screen(screen, client, server_name, server_info):
     """Display the 'Edit Server' screen."""
     font = pygame.font.Font(None, 36)
     input_font = pygame.font.Font(None, 28)
@@ -22,9 +22,7 @@ def display_edit_server_screen(screen, splash_image_path, server_manager, server
 
     while True:
         # Draw the splash screen as the background
-        splash_image = pygame.image.load(splash_image_path)
-        splash_image = pygame.transform.scale(splash_image, (screen.get_width(), screen.get_height()))
-        screen.blit(splash_image, (0, 0))
+        draw_splash_screen(screen, client)
 
         # Title
         title = font.render("Edit Server", True, (255, 255, 255))
