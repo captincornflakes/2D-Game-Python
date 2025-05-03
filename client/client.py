@@ -1,14 +1,12 @@
 import pygame
 import os
 from pygame.locals import *
-from utils.gui_main import main_menu_screen  # Ensure main menu screen is imported
-from utils.config_man import load_config, save_config  # Ensure config functions are imported
-from utils.server_manager import ServerManager  # Ensure ServerManager is imported
-from utils.gui_game import draw_checkered_grid  # Ensure draw_checkered_grid is imported
-from utils.event.keepalive import start_keepalive  # Ensure keepalive function is imported
-from utils.event.ping_server import ping_server  # Ensure ping_server is imported
-from utils.tcp_handler import TCPHandler  # Ensure TCPHandler is imported
-from utils.udp_handler import UDPHandler  # Ensure UDPHandler is imported
+from utils.gui_main import main_menu_screen  # Import the main menu screen
+from utils.config_man import load_config, save_config  # Import configuration functions
+from utils.server_manager import ServerManager  # Import ServerManager
+from utils.gui_game import draw_checkered_grid  # Import draw_checkered_grid
+from utils.tcp_handler import TCPHandler  # Import TCPHandler
+from utils.udp_handler import UDPHandler  # Import UDPHandler
 
 # Constants
 TILE_SIZE = 32
@@ -16,6 +14,7 @@ TILE_SIZE = 32
 
 class ClientApp:
     def __init__(self):
+        """Initialize the client application."""
         pygame.init()
         self.config_path = os.path.join(os.path.dirname(__file__), "config.json")
         self.config = load_config(self.config_path)  # Load configuration
@@ -40,8 +39,8 @@ class ClientApp:
         self.player_name = self.config.get("player_name", "Player")  # Default username
 
         # Initialize TCP and UDP handlers
-        self.tcp_handler = TCPHandler(self.address, self.port)  # Initialize TCP handler with server address and port
-        self.udp_handler = UDPHandler(self.address, self.port)  # Initialize UDP handler with server address and port
+        self.tcp_handler = TCPHandler(self.address, self.port)  # Initialize TCP handler
+        self.udp_handler = UDPHandler(self.address, self.port)  # Initialize UDP handler
 
     def save_config(self):
         """Save the client configuration."""
@@ -59,10 +58,10 @@ class ClientApp:
                         # Handle screen resizing
                         self.screen = pygame.display.set_mode((event.w, event.h), RESIZABLE)
                 self.screen.fill((0, 0, 0))
-                draw_checkered_grid(self.screen, self.location, self.config)  # Pass self.location and config
+                draw_checkered_grid(self.screen, self.location, TILE_SIZE)  # Pass self.location and TILE_SIZE
                 pygame.display.flip()
-        except socket.error as e:
-            print(f"Socket error: {e}")
+        except Exception as e:
+            print(f"Error in game loop: {e}")
         finally:
             self.connected = False
 

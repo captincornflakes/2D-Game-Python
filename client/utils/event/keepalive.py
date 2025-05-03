@@ -5,15 +5,19 @@ def start_keepalive(client):
     def keepalive_loop():
         while client.connected:
             try:
-                # Send a keepalive message to the server
-                keepalive_message = {"action": "keepalive"}
+                # Send a keepalive message to the server with the client's UUID
+                keepalive_message = {
+                    "action": "keepalive",
+                    "uuid": client.uuid  # Include the client's UUID
+                }
                 client.udp_handler.send_message(keepalive_message)
-                print("Keepalive message sent to the server.")
+                print(f"Keepalive message sent to the server with UUID: {client.uuid}")
 
                 # Wait for the server's response
                 response = client.udp_handler.receive_message()
                 if response and response.get("action") == "keepalive_ack":
                     print(f"Server response: {response.get('message', 'No message received')}")
+                    print(f"Server acknowledged UUID: {response.get('uuid')}, Player Name: {response.get('player_name')}")
                 else:
                     print("Unexpected or no response from server for keepalive.")
             except Exception as e:

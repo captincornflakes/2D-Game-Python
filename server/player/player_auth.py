@@ -1,7 +1,8 @@
 import uuid
 import os
 import json
-import requests  # Import requests for API calls
+import requests
+
 
 class PlayerAuth:
     def __init__(self, world_folder):

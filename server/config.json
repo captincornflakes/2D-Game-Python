@@ -1,8 +1,7 @@
 {
   "server": {
     "host": "localhost",
-    "tcp_port": 23546,
-    "udp_port": 23546
+    "port": 23546
   },
   "world": {
     "motd": "Welcome to the 2D Survival Game!",

@@ -1,5 +1,5 @@
 import json
-from utils.config_handler import load_config  # Import the config handler
+from utils.config_handler import load_config
 
 
 def handle_ping(client_socket):

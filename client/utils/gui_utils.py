@@ -2,7 +2,6 @@ import pygame
 import os
 from utils.config_man import load_config  # Ensure configuration loader is imported
 
-
 # Load configuration to get the scaling factor
 config = load_config("config.json")
 gui_scale = config.get("gui_scale", 1.0)  # Default to 1.0 if not specified
@@ -34,3 +33,17 @@ def draw_splash_screen(screen, client):
 
     # Draw the splash image on the screen
     screen.blit(splash_image, (0, 0))
+
+def draw_checkered_grid(screen, grid_offset, base_grid_size=32):
+    """Draw a checkered grid on the screen."""
+    light_gray = (200, 200, 200)
+    dark_gray = (150, 150, 150)
+
+    scaled_grid_size = int(base_grid_size * gui_scale)
+    screen_width, screen_height = screen.get_size()
+
+    for y in range(0, screen_height, scaled_grid_size):
+        for x in range(0, screen_width, scaled_grid_size):
+            # Alternate between light gray and dark gray
+            color = light_gray if (x // scaled_grid_size + y // scaled_grid_size) % 2 == 0 else dark_gray
+            pygame.draw.rect(screen, color, pygame.Rect(x, y, scaled_grid_size, scaled_grid_size))

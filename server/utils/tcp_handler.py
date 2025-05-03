@@ -4,13 +4,14 @@ import threading
 
 
 class TCPHandler:
-    def __init__(self, host, port, connection_callback):
-        self.host = host
-        self.port = port
-        self.connection_callback = connection_callback  # Callback to handle new connections
+    def __init__(self, host, port, message_callback):
+        """Initialize the TCP handler with the host, port, and message callback."""
+        self.host = host  # Server host
+        self.port = port  # Server port
+        self.message_callback = message_callback  # Callback to handle incoming messages
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.host, self.port))
-        self.server_socket.listen(5)
+        self.server_socket.bind((self.host, self.port))  # Bind the socket to the host and port
+        self.server_socket.listen(5)  # Listen for incoming connections
         self.running = False
 
     def start(self):
@@ -40,7 +41,7 @@ class TCPHandler:
 
                 try:
                     message = json.loads(data.decode('utf-8'))
-                    self.connection_callback(client_socket, addr, message)
+                    self.message_callback(client_socket, addr, message)
                 except json.JSONDecodeError as e:
                     print(f"Invalid JSON from {addr}: {e}")
         except Exception as e:

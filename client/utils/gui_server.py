@@ -6,14 +6,14 @@ from pygame.locals import *
 from utils.server_manager import ServerManager
 from utils.gui_utils import draw_button, draw_splash_screen
 from utils.gui_game import game_gui_loop
-from utils.event.connect_to_server import connect_to_server
-from utils.gui_edit_server import display_edit_server_screen  # Import edit server screen
-from utils.gui_add_server import display_add_server_screen  # Import add server screen
-from utils.event.ping_server import ping_server  # Import ping_server
+from utils.gui_edit_server import display_edit_server_screen
+from utils.gui_add_server import display_add_server_screen
+from utils.event.ping_server import ping_server
 
 def display_join_server_screen(screen, client_app):
     """Display the join server screen."""
-    from utils.gui_main import main_menu_screen  # Import locally to avoid circular imports
+    from utils.gui_main import main_menu_screen  # Lazy import
+    from utils.event.connect_to_server import connect_to_server  # Lazy import
 
     font = pygame.font.Font(None, 36)
     server_manager = ServerManager()
@@ -108,7 +108,7 @@ def display_join_server_screen(screen, client_app):
             y_offset += 35
 
         for event in pygame.event.get():
-            if event.type == MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN:
                 current_time = time.time()
                 if current_time - last_button_press_time >= 1:
                     if back_button_rect.collidepoint(event.pos):

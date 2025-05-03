@@ -23,7 +23,7 @@ def send_player_move(client, x, y):
     try:
         # Create the player_move message
         player_move_message = {
-            "type": "player_move",
+            "action": "player_move",
             "uuid": client.player_data.get("uuid"),  # Use the player's UUID
             "x": x,
             "y": y

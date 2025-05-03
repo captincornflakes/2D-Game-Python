@@ -1,25 +1,29 @@
 import os
 import json
-from utils.ops_handler import save_ops_data
-from utils.helpers import save_player_data
-from utils.worldgen import generate_initial_world  # Import the function from worldgen.py
+from utils.ops_handler import save_ops, load_ops  # Import ops_handler functions
 from utils.config_handler import load_config  # Import the config handler
 
+# Load the world folder from the configuration
+config = load_config()
+world_folder = config["world"]["world_file"]  # Dynamically load the world folder path
+
 def initialize_world_folder(world_folder, initial_chunks, world_generator, players, ops, config):
-    """Initialize the world folder and generate initial world data if it doesn't exist."""
+    """
+    Initialize the world folder and generate initial world data if it doesn't exist.
+    """
     if not os.path.exists(world_folder):
         print(f"Creating world folder at {world_folder}...")
         os.makedirs(world_folder)
     else:
         print(f"World folder already exists at {world_folder}.")
 
-    # Generate initial chunks using the function from worldgen.py
+    # Generate initial chunks using the WorldGenerator instance
     print("Generating initial chunks...")
-    generate_initial_world(initial_chunks, world_folder, world_generator)
+    world_generator.generate_initial_world()  # Call the method to generate chunks
 
     # Save world data
     print("Saving world data...")
-    save_world_data(world_folder, config)
+    save_world_data(config)
 
     # Save player data
     print("Saving player data...")
@@ -27,11 +31,12 @@ def initialize_world_folder(world_folder, initial_chunks, world_generator, playe
 
     # Save operator data
     print("Saving operator data...")
-    save_ops_data(ops, world_folder)
+    save_ops(ops)
 
     print("World folder initialization complete.")
 
-def save_world_data(world_folder, config):
+
+def save_world_data(config):
     """Save world data to the world-data.json file."""
     world_data = {
         "time": 0,  # Initial world time
@@ -44,6 +49,7 @@ def save_world_data(world_folder, config):
         print(f"Saving initial world data to {world_data_file}...")
         with open(world_data_file, 'w') as f:
             json.dump(world_data, f)
+
 
 def load_world(world_folder, players):
     """Load the world data, count chunks, and reset player connections."""
@@ -78,12 +84,9 @@ def load_world(world_folder, players):
     # Final output message
     print("World file is loaded.")
 
+
 def get_chunk(chunk_x, chunk_y):
     """Retrieve a specific chunk from the world folder."""
-    # Load the world folder path from the config.json file
-    config = load_config("config.json")
-    world_folder = config["world"]["folder"]
-
     # Construct the chunk file path
     chunk_file = os.path.join(world_folder, "chunks", f"{chunk_x}x{chunk_y}.json")
     if os.path.exists(chunk_file):
@@ -99,20 +102,35 @@ def get_chunk(chunk_x, chunk_y):
         print(f"Chunk ({chunk_x}, {chunk_y}) does not exist.")
         return None
 
-def update_player_location(world_folder, uuid, new_location):
-    """Update the player's location in the players.json file."""
-    players_file = os.path.join(world_folder, "players.json")
 
+def load_players_file():
+    """Load the players.json file."""
+    players_file = os.path.join(world_folder, "players.json")
     if not os.path.exists(players_file):
         print(f"Players file not found at {players_file}. Creating a new one.")
-        player_data = {}
-    else:
-        try:
-            with open(players_file, "r") as file:
-                player_data = json.load(file)
-        except Exception as e:
-            print(f"Error loading players.json: {e}")
-            return
+        return {}
+    try:
+        with open(players_file, "r") as file:
+            return json.load(file)
+    except Exception as e:
+        print(f"Error loading players.json: {e}")
+        return {}
+
+
+def save_players_file(player_data):
+    """Save the players.json file."""
+    players_file = os.path.join(world_folder, "players.json")
+    try:
+        with open(players_file, "w") as file:
+            json.dump(player_data, file, indent=4)
+        print("Players file successfully saved.")
+    except Exception as e:
+        print(f"Error saving players.json: {e}")
+
+
+def update_player_location(uuid, new_location):
+    """Update the player's location in the players.json file."""
+    player_data = load_players_file()
 
     if uuid in player_data:
         print(f"Updating location for player with UUID {uuid}.")
@@ -121,28 +139,12 @@ def update_player_location(world_folder, uuid, new_location):
         print(f"Adding new player with UUID {uuid}.")
         player_data[uuid] = {"location": new_location}
 
-    try:
-        with open(players_file, "w") as file:
-            json.dump(player_data, file, indent=4)
-        print(f"Player location for UUID {uuid} successfully updated.")
-    except Exception as e:
-        print(f"Error saving players.json: {e}")
+    save_players_file(player_data)
 
 
-def update_player_inventory(world_folder, uuid, new_inventory):
+def update_player_inventory(uuid, new_inventory):
     """Update the player's inventory in the players.json file."""
-    players_file = os.path.join(world_folder, "players.json")
-
-    if not os.path.exists(players_file):
-        print(f"Players file not found at {players_file}. Creating a new one.")
-        player_data = {}
-    else:
-        try:
-            with open(players_file, "r") as file:
-                player_data = json.load(file)
-        except Exception as e:
-            print(f"Error loading players.json: {e}")
-            return
+    player_data = load_players_file()
 
     if uuid in player_data:
         print(f"Updating inventory for player with UUID {uuid}.")
@@ -151,28 +153,12 @@ def update_player_inventory(world_folder, uuid, new_inventory):
         print(f"Adding new player with UUID {uuid}.")
         player_data[uuid] = {"inventory": new_inventory}
 
-    try:
-        with open(players_file, "w") as file:
-            json.dump(player_data, file, indent=4)
-        print(f"Player inventory for UUID {uuid} successfully updated.")
-    except Exception as e:
-        print(f"Error saving players.json: {e}")
+    save_players_file(player_data)
 
 
-def update_player_stats(world_folder, uuid, new_stats):
+def update_player_stats(uuid, new_stats):
     """Update the player's stats in the players.json file."""
-    players_file = os.path.join(world_folder, "players.json")
-
-    if not os.path.exists(players_file):
-        print(f"Players file not found at {players_file}. Creating a new one.")
-        player_data = {}
-    else:
-        try:
-            with open(players_file, "r") as file:
-                player_data = json.load(file)
-        except Exception as e:
-            print(f"Error loading players.json: {e}")
-            return
+    player_data = load_players_file()
 
     if uuid in player_data:
         print(f"Updating stats for player with UUID {uuid}.")
@@ -181,9 +167,37 @@ def update_player_stats(world_folder, uuid, new_stats):
         print(f"Adding new player with UUID {uuid}.")
         player_data[uuid] = {"stats": new_stats}
 
-    try:
-        with open(players_file, "w") as file:
-            json.dump(player_data, file, indent=4)
-        print(f"Player stats for UUID {uuid} successfully updated.")
-    except Exception as e:
-        print(f"Error saving players.json: {e}")
+    save_players_file(player_data)
+
+
+def initialize_or_load_world(world_folder, world_generator, players, ops, config):
+    """Initialize or load the world folder."""
+    chunk_size = config["world"].get("chunk_size", 4)
+    initial_chunks = get_initial_chunks(chunk_size)
+
+    if os.path.exists(world_folder):
+        print("World folder exists. Loading world...")
+        load_world(world_folder, players)
+    else:
+        print("World folder does not exist. Initializing world...")
+        initialize_world_folder(
+            world_folder,
+            initial_chunks,
+            world_generator,
+            players,
+            ops,
+            config
+        )
+
+def save_player_data(players):
+    """Save player data to the players.json file."""
+    print("Saving player data...")
+    players.save_players()
+    
+def get_initial_chunks(chunk_size):
+    """Generate a list of initial chunks based on the chunk size."""
+    initial_chunks = []
+    for x in range(chunk_size):
+        for y in range(chunk_size):
+            initial_chunks.append({"x": x, "y": y})
+    return initial_chunks

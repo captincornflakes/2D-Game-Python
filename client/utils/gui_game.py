@@ -57,6 +57,8 @@ def game_gui_loop(screen, client):
     """Main GUI loop for the game."""
     # Import main_menu_screen locally to avoid circular import
     from utils.gui_main import main_menu_screen
+            # Start the keepalive process
+    start_keepalive(client)
 
     udp_handler = client.udp_handler  # Get the UDP handler from the client
 

@@ -1,5 +1,5 @@
 import json
-from utils.world_handler import get_chunk  # Import the get_chunk function
+from world.world_handler import get_chunk  # Updated import path
 
 def handle_request_tiles(addr, message, udp_socket, chunk_size=32):
     """Handle a tile request from the client."""
